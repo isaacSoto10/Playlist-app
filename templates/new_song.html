@@ -3,5 +3,28 @@
 {% block content %}
 
 <h1>Add a form that when submitted creates a new song!</h1>
+<h1 class="display-4">Create a new song!</h1>
+<p class="lead">add a new song</p>
+
+<form method="POST">
+
+    {{ form.hidden_tag() }}
+
+    {% for field in form
+    if field.widget.input_type != 'hidden' %}
+    <p>
+      {{ field.label }}
+      {{ field }}
+
+      {% for error in field.errors %}
+      {{ error }}
+      {% endfor %}
+    </p>
+    {% endfor %}
+
+    <button type="submit">Add song</button>
+
+</form>
+
 
 {% endblock %}

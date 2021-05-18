@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template
-#from flask_debugtoolbar import DebugToolbarExtension
+from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, Playlist, Song, PlaylistSong
 from forms import NewSongForPlaylistForm, SongForm, PlaylistForm
@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 
 db.create_all()
-#app.debug = True
+app.debug = True
 app.config['SECRET_KEY'] = "I'LL NEVER TELL!!"
 
 # Having the Debug Toolbar show redirects explicitly is often useful;
@@ -61,7 +61,7 @@ def add_playlist():
         playlist = Playlist(name=name, description=description)
         db.session.add(playlist)
         db.session.commit()
-        return redirect('/playlists')
+        return render_template('playlists.html')
     else:
         return render_template('new_playlist.html', form = form)
     """Handle add-playlist form:
@@ -87,9 +87,8 @@ def show_all_songs():
 
 @app.route("/songs/<int:song_id>")
 def show_song(song_id):
-    song = Song.get_or_404(song_id)
-
-    return render_template("song.html", song=song)
+    song = Song.query.get(song_id)
+    return render_template("song.html", Song=song)
     """return a specific song"""
 
     # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
@@ -97,21 +96,19 @@ def show_song(song_id):
 
 @app.route("/songs/add", methods=["GET", "POST"])
 def add_song():
-    form = SongForm()
+    form=SongForm()
     if form.validate_on_submit():
-        name = form.name.data
-        author = form.author.data
-        Date_Posted = form.Date_Posted.data
-
+        title = form.title.data
+        artist= form.artist.data
         song = Song(
-            name=name, author=author, Date_Posted=Date_Posted
-        )
+            title=title, artist=artist
+            )
         db.session.add(song)
         db.session.commit()
-        return redirect('songs.html', form=form)
+        return redirect('/songs')
 
     else:
-        return render_template('new_song.html')
+        return render_template('new_song.html', form = form)
     """Handle add-song form:
 
     - if form not filled out or invalid: show form
@@ -128,9 +125,9 @@ def add_song_to_playlist(playlist_id):
     form = NewSongForPlaylistForm()
 
   # Restrict form to songs not already on this playlist
-    curr_on_playlist = [s.id for s in playlist.songs]
-    form.song.choices = (db.session.query(Song.id, Song.title)
-                      .filter(Song.id.notin_(curr_on_playlist))
+    curr_on_playlist = [s.song_id for s in playlist.songs]
+    form.song.choices = (db.session.query(Song.song_id, Song.title)
+                      .filter(Song.song_id.notin_(curr_on_playlist))
                       .all())
 
     if form.validate_on_submit():

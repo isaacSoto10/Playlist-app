@@ -11,7 +11,8 @@ class Playlist(db.Model):
     playlist_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    PlayListSong = db.relationship(
+
+    songs = db.relationship(
         'PlaylistSong', backref='playlist'
 
     )
@@ -25,16 +26,15 @@ class Song(db.Model):
     song_id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
     title = db.Column(db.String, nullable=False)
     artist = db.Column(db.String, nullable=False)
-    Playlistsong = db.relationship('PlaylistSong',
-                                  backref='song')
+    Playlistsong = db.relationship('PlaylistSong', backref='song')
 
 
 class PlaylistSong(db.Model):
     """Mapping of a playlist to a song."""
     __tablename__ = 'PlayListSong'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
-    playlist_id = db.Column(db.Integer, db.ForeignKey("playlists.playlist_id"), primary_key=True)
-    song_id = db.Column(db.Integer, db.ForeignKey('songs.song_id'), primary_key=True)
+    playlist_id = db.Column(db.Integer, db.ForeignKey("playlists"), primary_key=True, unique=True)
+    song_id = db.Column(db.Integer, db.ForeignKey('songs'), primary_key=True)
 
     # ADD THE NECESSARY CODE HERE
 

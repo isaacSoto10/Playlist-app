@@ -8,6 +8,7 @@ from wtforms.validators import InputRequired, Length, NumberRange, URL, Optional
 class PlaylistForm(FlaskForm):
     """Form for adding playlists."""
     name = StringField("Playlist Name", validators=[InputRequired()])
+    description = StringField("Playlist Description", validators=[InputRequired()])
     Songs = StringField(
         "Select the songs", validators=[Optional()]
     )
@@ -18,9 +19,9 @@ class PlaylistForm(FlaskForm):
 
 class SongForm(FlaskForm):
     """Form for adding songs."""
-    name = StringField("Song Name", validators=[InputRequired()])
-    author = StringField("Author", validators=[InputRequired()])
-    Date_Posted = StringField("Date Published", validators=[Optional()])
+    title = StringField("Song Name", validators=[InputRequired()])
+    artist = StringField("Author", validators=[InputRequired()])
+
 
     # Add the necessary code to use this form
 
